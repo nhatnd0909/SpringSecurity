@@ -38,10 +38,15 @@ public class AuthService {
 	private AuthenticationManager authenticationManager;
 
 	public LoginResponse login(String email, String password) {
-		
+		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+		if (!user.isEnabled()) {
+			throw new RuntimeException("Account not verified. Please verify your account.");
+		}
+//		
 		var authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-		
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		var principal = (UserPrinciple) authentication.getPrincipal();
 

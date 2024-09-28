@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demoSpringSecurity.dto.RegisterUserDto;
+import com.example.demoSpringSecurity.dto.VerifyUserDto;
 import com.example.demoSpringSecurity.model.LoginRequest;
 import com.example.demoSpringSecurity.model.LoginResponse;
 import com.example.demoSpringSecurity.model.UserEntity;
@@ -31,5 +32,16 @@ public class AuthController {
 		UserEntity registeredUser = authService.signup(registerUserDto);
 		return ResponseEntity.ok(registeredUser);
 	}
+
+	@PostMapping("/verify")
+	public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDto verifyUserDto) {
+		try {
+			authService.verifyUser(verifyUserDto);
+			return ResponseEntity.ok("Account verified successfully");
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
 
 }
