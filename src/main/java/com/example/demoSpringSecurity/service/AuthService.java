@@ -113,4 +113,20 @@ public class AuthService {
 		int code = random.nextInt(900000) + 100000;
 		return String.valueOf(code);
 	}
+	
+	 public void resendVerificationCode(String email) {
+	        Optional<UserEntity> optionalUser = userRepository.findByEmail(email);
+	        if (optionalUser.isPresent()) {
+	        	UserEntity user = optionalUser.get();
+	            if (user.isEnabled()) {
+	                throw new RuntimeException("Account is already verified");
+	            }
+	            user.setVerificationCode(generateVerificationCode());
+	            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
+	            sendVerificationEmail(user);
+	            userRepository.save(user);
+	        } else {
+	            throw new RuntimeException("User not found");
+	        }
+	    }
 }
